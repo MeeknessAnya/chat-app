@@ -1,20 +1,20 @@
-import React from "react"
+import React from "react";
 
 const Search = () => {
-    return(
+    return (
         <div className="search">
             <div className="searchForm">
-                <input types="text" />
+                <input type="text" placeholder="Find a user"/>
             </div>
             <div className="userChat">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHCPpTF-eqTT5UsdVE7xebC2lt_jwaIUiIDgdMS8oG&s" alt="" />
+                <img src="https://images.unsplash.com/photo-1664918696737-db7cf04d28b8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxNHx8fGVufDB8fHx8&auto=format&fit=crop&w=900&q=60" alt="" />
                 <div className="userChatInfo">
-                    <span>Meek</span>
+                    <span>Chioma</span>
                 </div>
             </div>
         </div>
     )
-}
+};
 
 
-export default Search
+export default Search;
