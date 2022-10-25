@@ -51,7 +51,12 @@ const Search = () => {
       if (!res.exists()) {
         //create a chat in chats collection
         await setDoc(doc(db, "chats", combinedId), { messages: [] });
-
+            // text,
+            // from: user1,
+            // to: user2, 
+            // createdAt: serverTimestamp. frombate (new Date()),
+            // photoURL: currentUser.photoURL,
+            // unread: true,
         //create user chats
         await updateDoc(doc(db, "userChats", currentUser.uid), {
           [combinedId + ".userInfo"]: {

@@ -63,6 +63,7 @@ const Input = () => {
         text,
       },
       [data.chatId + ".date"]: serverTimestamp(),
+      unread: true
     });
 
     await updateDoc(doc(db, "userChats", data.user.uid), {
@@ -70,6 +71,7 @@ const Input = () => {
         text,
       },
       [data.chatId + ".date"]: serverTimestamp(),
+      unread: true
     });
 
     setText("");

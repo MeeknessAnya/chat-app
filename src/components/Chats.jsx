@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { ChatContext } from "../context/ChatContext";
 import { db } from "../firebase";
+import { Timestamp } from "firebase/firestore";
 
 const Chats = () => {
   const [chats, setChats] = useState([]);
@@ -30,7 +31,7 @@ const Chats = () => {
 
   return (
     <div className="chats">
-      {Object.entries(chats)?.sort((a,b)=>b[1].date - a[1].date).map((chat) => (
+      {Object.entries(chats)?.sort((a, b) => b[1].date - a[1].date).map((chat) => (
         <div
           className="userChat"
           key={chat[0]}
@@ -40,6 +41,15 @@ const Chats = () => {
           <div className="userChatInfo">
             <span>{chat[1].userInfo.displayName}</span>
             <p>{chat[1].lastMessage?.text}</p>
+            {Timestamp.now() - chat.date < 5 && (
+              <small className="unread">New</small>
+            )}
+            {console.log(Timestamp.now())}
+            {console.log(chat.date)}
+            {chat?.from !== currentUser && chat?.unread && (
+              <small className="unread">New</small>
+            )}
+
           </div>
         </div>
       ))}
