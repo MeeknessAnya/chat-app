@@ -26,33 +26,37 @@ const Chats = () => {
   }, [currentUser.uid]);
 
   const handleSelect = async (u) => {
-    await updateDoc(doc(db, "userChats", u.userInfo.uid), {
+    await updateDoc(doc(db, "userChats", currentUser.uid), {
       // [data.chatId + ".lastMessage"]: u?.lastMessage,
       // [data.chatId + ".date"]: u?.date,
       [data.chatId + ".read"]: true
     });
-    console.log("Updated")
+    console.log(u)
     dispatch({ type: "CHANGE_USER", payload: u.userInfo });
   };
 
+  console.log(chats)
+
   return (
     <div className="chats">
-      {Object.entries(chats)?.sort((a, b) => b[1].date - a[1].date).map((chat) => (
-        <div
-          className="userChat"
-          key={chat[0]}
-          onClick={() => handleSelect(chat[1])}
-        >{chat[1].userInfo && <>
-          <img src={chat[1].userInfo?.photoURL} alt="" />
-          <div className="userChatInfo">
-            <span>{chat[1].userInfo.displayName}</span>
-            {console.log(chat)}
-            {chat[1].read == false ? <span className="new">NEW</span> : <></>}
-            <p>{chat[1].lastMessage?.text}</p>
-          </div>
+      {Object.entries(chats).sort((a, b) => b[1].date - a[1].date).map((chat) => (
+        <>
+          {chat[1].userInfo && <>
+            <div
+              className="userChat"
+              key={chat[0]}
+              onClick={() => handleSelect(chat[1])}
+            >
+              <img src={chat[1].userInfo.photoURL} alt="ghjs" />
+              <div className="userChatInfo">
+                <span>{chat[1].userInfo.displayName}</span>
+                {console.log(chat)}
+                {chat[1].read == false ? <span className="new">NEW</span> : <></>}
+                <p>{chat[1].lastMessage?.text}</p>
+              </div>
+            </div>
+          </>}
         </>
-          }
-        </div>
       ))}
     </div>
   );
