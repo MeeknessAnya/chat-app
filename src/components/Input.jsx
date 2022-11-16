@@ -21,8 +21,6 @@ const Input = () => {
   const { currentUser } = useContext(AuthContext);
   const { data } = useContext(ChatContext);
 
-
-
   const handleSend = async () => {
     if (img) {
       const storageRef = ref(storage, uuid());
@@ -35,26 +33,35 @@ const Input = () => {
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+            const today = new Date;
+            const hours = today.getHours() % 12 || 12;
+            var minutes = today.getMinutes();
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            const ampm = today.getHours() >= 12 ? " PM" : " AM";
             await updateDoc(doc(db, "chats", data.chatId), {
               messages: arrayUnion({
                 id: uuid(),
                 text,
                 senderId: currentUser.uid,
-                date: Timestamp.now(),
+                date: hours + ":" + minutes + ampm,
                 img: downloadURL,
-                
               }),
             });
           });
         }
       );
     } else {
+      const today = new Date;
+      const hours = today.getHours() % 12 || 12
+      var minutes = today.getMinutes();
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      const ampm = today.getHours() >= 12 ? " PM" : " AM"
       await updateDoc(doc(db, "chats", data.chatId), {
         messages: arrayUnion({
           id: uuid(),
           text,
           senderId: currentUser.uid,
-          date: Timestamp.now(),
+          date: hours + ":" + minutes + ampm,
         }),
       });
     }
@@ -64,7 +71,7 @@ const Input = () => {
         text,
       },
       [data.chatId + ".date"]: serverTimestamp(),
-      unread: true
+      [data.chatId + ".read"]: false
     });
 
     await updateDoc(doc(db, "userChats", data.user.uid), {
@@ -72,12 +79,19 @@ const Input = () => {
         text,
       },
       [data.chatId + ".date"]: serverTimestamp(),
-      unread: true
+      [data.chatId + ".read"]: false
     });
 
     setText("");
     setImg(null);
   };
+
+  const handleKeyDown = event => {
+    if (event.key === 'Enter') {
+      handleSend();
+    }
+  };
+
   return (
 
     <div className="input">
@@ -86,6 +100,7 @@ const Input = () => {
         placeholder="Type something..."
         onChange={(e) => setText(e.target.value)}
         value={text}
+        onKeyDown={handleKeyDown}
       />
       <div className="send">
         <img src={Attach} alt="" />

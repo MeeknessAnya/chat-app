@@ -1,15 +1,14 @@
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { ChatContext } from "../context/ChatContext";
 import { db } from "../firebase";
-// import { Timestamp } from "firebase/firestore";
 
 const Chats = () => {
   const [chats, setChats] = useState([]);
 
   const { currentUser } = useContext(AuthContext);
-  const { dispatch } = useContext(ChatContext);
+  const { data, dispatch } = useContext(ChatContext);
 
   useEffect(() => {
     const getChats = () => {
@@ -25,8 +24,16 @@ const Chats = () => {
     currentUser.uid && getChats();
   }, [currentUser.uid]);
 
-  const handleSelect = (u) => {
-    dispatch({ type: "CHANGE_USER", payload: u });
+  const handleSelect = async (u) => {
+    console.log("Selected")
+    console.log(u)
+    await updateDoc(doc(db, "userChats", u.userInfo.uid), {
+      [data.chatId + ".lastMessage"]: u.lastMessage,
+      [data.chatId + ".date"]: u.date,
+      [data.chatId + ".read"]: true
+    });
+    console.log("Updated")
+    dispatch({ type: "CHANGE_USER", payload: u.userInfo });
   };
 
   return (
@@ -35,23 +42,16 @@ const Chats = () => {
         <div
           className="userChat"
           key={chat[0]}
-          onClick={() => handleSelect(chat[1].userInfo)}
-        >{ chat[1].userInfo && <>
+          onClick={() => handleSelect(chat[1])}
+        >{chat[1].userInfo && <>
           <img src={chat[1].userInfo?.photoURL} alt="" />
           <div className="userChatInfo">
-            <span>{chat[1].userInfo?.displayName}</span>
-            <p>{chat[1].lastMessage?.text}</p> 
-            </div>
-            
-            {/* {Timestamp.now() - chat.date < 5 && (
-              <small className="unread">New</small>
-            )}
-            {console.log(Timestamp.now())}
-            {console.log(chat.date)}
-            {chat?.from !== currentUser && chat?.unread && (
-              <small className="unread">New</small>
-            )} */}
-          </>
+            <span>{chat[1].userInfo.displayName}</span>
+            {console.log(chat)}
+            {chat[1].read == false ? <span> New </span> : <></>}
+            <p>{chat[1].lastMessage?.text}</p>
+          </div>
+        </>
           }
         </div>
       ))}
