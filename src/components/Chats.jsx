@@ -13,6 +13,7 @@ const Chats = () => {
   useEffect(() => {
     const getChats = () => {
       const unsub = onSnapshot(doc(db, "userChats", currentUser.uid), (doc) => {
+        console.log(currentUser.uid);
         setChats(doc.data());
       });
 
@@ -25,11 +26,9 @@ const Chats = () => {
   }, [currentUser.uid]);
 
   const handleSelect = async (u) => {
-    console.log("Selected")
-    console.log(u)
     await updateDoc(doc(db, "userChats", u.userInfo.uid), {
-      [data.chatId + ".lastMessage"]: u.lastMessage,
-      [data.chatId + ".date"]: u.date,
+      // [data.chatId + ".lastMessage"]: u?.lastMessage,
+      // [data.chatId + ".date"]: u?.date,
       [data.chatId + ".read"]: true
     });
     console.log("Updated")
@@ -48,7 +47,7 @@ const Chats = () => {
           <div className="userChatInfo">
             <span>{chat[1].userInfo.displayName}</span>
             {console.log(chat)}
-            {chat[1].read == false ? <span> New </span> : <></>}
+            {chat[1].read == false ? <span className="new">NEW</span> : <></>}
             <p>{chat[1].lastMessage?.text}</p>
           </div>
         </>
